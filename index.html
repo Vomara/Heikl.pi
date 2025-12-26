@@ -1,26 +1,20 @@
-
-
 <!DOCTYPE html>
-<html lang="ar" dir="rtl">
+<html>
 <head>
-    <meta charset="UTF-8">
-    <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>تطبيقي على Pi</title>
     <script src="https://sdk.minepi.com/pi-sdk.js"></script>
-    <style>
-        body { margin: 0; background-color: #050a30; display: flex; justify-content: center; align-items: center; min-height: 100vh; color: white; font-family: sans-serif; }
-        img { max-width: 100%; height: auto; border-radius: 10px; }
-    </style>
+    <title>Pi App</title>
 </head>
-<body>
-    <div style="text-align: center;">
-        <img src="1766517082729.jpg" alt="Logo">
-        <p>جاري الربط مع Pi Network...</p>
-    </div>
+<body style="text-align: center; padding-top: 50px;">
+    <h1>تطبيقي جاهز للربط</h1>
+    <div id="status">جاري طلب الكود من Pi...</div>
 
     <script>
-        // هذا الجزء هو المسؤول عن إظهار كود الربط
-        Pi.init({ version: "2.0", sandbox: true });
+        try {
+            Pi.init({ version: "2.0", sandbox: true });
+            document.getElementById('status').innerText = "إذا لم يظهر الكود تلقائياً، تأكد أنك في متصفح Chrome";
+        } catch (err) {
+            document.getElementById('status').innerText = "خطأ في الاتصال: " + err;
+        }
     </script>
 </body>
 </html>
