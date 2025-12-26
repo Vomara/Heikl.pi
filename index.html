@@ -1,29 +1,26 @@
+
+
 <!DOCTYPE html>
 <html lang="ar" dir="rtl">
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>تطبيقي على Pi</title>
+    <script src="https://sdk.minepi.com/pi-sdk.js"></script>
     <style>
-        body { 
-            margin: 0; 
-            background-color: #050a1a; 
-            display: flex; 
-            justify-content: center; 
-            align-items: center; 
-            min-height: 100vh; 
-        }
-        img { 
-            max-width: 100%; 
-            height: auto; 
-            border-radius: 10px; 
-        }
+        body { margin: 0; background-color: #050a30; display: flex; justify-content: center; align-items: center; min-height: 100vh; color: white; font-family: sans-serif; }
+        img { max-width: 100%; height: auto; border-radius: 10px; }
     </style>
 </head>
 <body>
-    <img src="1766517082729.jpg" alt="heikl.pi">
-</body>
-</html><script src="https://sdk.minepi.com/pi-sdk.js"></script>
-<script>
-  Pi.init({ version: "2.0", sandbox: true });
-</script>
+    <div style="text-align: center;">
+        <img src="1766517082729.jpg" alt="Logo">
+        <p>جاري الربط مع Pi Network...</p>
+    </div>
 
+    <script>
+        // هذا الجزء هو المسؤول عن إظهار كود الربط
+        Pi.init({ version: "2.0", sandbox: true });
+    </script>
+</body>
+</html>
