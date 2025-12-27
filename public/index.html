@@ -1,1 +1,59 @@
-<h1>Welcome to Heikl Pi App</h1>
+<!DOCTYPE html>
+<html lang="ar">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Heikl Pi App</title>
+    <script src="https://sdk.minepi.com/pi-sdk.js"></script>
+    <style>
+        body { font-family: Arial, sans-serif; text-align: center; padding: 50px; background-color: #f4f4f4; }
+        h1 { color: #333; }
+        .pay-button {
+            background-color: #673ab7;
+            color: white;
+            padding: 15px 30px;
+            border: none;
+            border-radius: 25px;
+            font-size: 18px;
+            cursor: pointer;
+            box-shadow: 0 4px 8px rgba(0,0,0,0.2);
+        }
+        .pay-button:hover { background-color: #512da8; }
+    </style>
+</head>
+<body>
+
+    <h1>Welcome to Heikl Pi App</h1>
+    <p>اضغط على الزر أدناه لإتمام المعاملة وتفعيل الخانة رقم 10</p>
+    
+    <button class="pay-button" onclick="transferPi()">اضغط هنا لتفعيل الخطوة 10 - دفع 0.1 Pi</button>
+
+    <script>
+        // تهيئة Pi SDK
+        const Pi = window.Pi;
+        Pi.init({ version: "2.0", sandbox: false });
+
+        async function transferPi() {
+            try {
+                const payment = await Pi.createPayment({
+                    amount: 0.1,
+                    memo: "تفعيل الخانة رقم 10 لتطبيق Heikl Pi",
+                    metadata: { orderId: "12345" }
+                }, {
+                    onReadyForServerApproval: (paymentId) => {
+                        console.log("Payment Ready for Approval:", paymentId);
+                    },
+                    onReadyForServerCompletion: (paymentId, txid) => {
+                        console.log("Payment Completed:", txid);
+                        alert("تمت العملية بنجاح! تحقق من الخانة رقم 10 الآن.");
+                    },
+                    onCancel: (paymentId) => { console.log("Payment Cancelled"); },
+                    onError: (error, payment) => { console.error("Payment Error", error); }
+                });
+            } catch (err) {
+                alert("تأكد من فتح الرابط داخل Pi Browser وبأنك موثق KYC");
+            }
+        }
+    </script>
+</body>
+</html>
