@@ -1,27 +1,22 @@
 <!DOCTYPE html>
-<html>
+<html lang="ar" dir="rtl">
 <head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>تطبيق فومارا</title>
     <script src="https://sdk.minepi.com/pi-sdk.js"></script>
-    <title>Pi App</title>
 </head>
-<body style="text-align: center; padding-top: 50px; font-family: Arial, sans-serif;">
-
-    <h1>تطبيقي جاهز للربط</h1>
-    <div id="status">جاري طلب الكود من نظام Pi...</div>
+<body>
+    <h1>مرحباً بك في تطبيق فومارا</h1>
+    <p id="status">جاري الاتصال بنظام Pi...</p>
 
     <script>
-        // هذا الجزء هو المسؤول عن إظهار الكود في متصفح Chrome
-        try {
-            const Pi = window.Pi;
-            
-            Pi.init({ version: "2.0", sandbox: true });
+        // 2. تهيئة التطبيق في وضع الـ Sandbox لتجاوز الخطوة 6
+        const Pi = window.Pi;
+        Pi.init({ version: "2.0", sandbox: true });
 
-            document.getElementById("status").innerText = "إذا لم يظهر الكود تلقائياً، تأكد أنك تستخدم متصفح Chrome";
-        } catch (err) {
-            document.getElementById("status").innerText = "خطأ في الاتصال بمكتبة Pi";
-            console.error(err);
-        }
+        // رسالة للتأكد من أن الكود يعمل
+        document.getElementById("status").innerText = "تطبيق فومارا في وضع الاختبار (Sandbox) جاهز الآن.";
     </script>
-
 </body>
 </html>
