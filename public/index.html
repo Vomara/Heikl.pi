@@ -18,42 +18,44 @@
             cursor: pointer;
             box-shadow: 0 4px 8px rgba(0,0,0,0.2);
         }
-        .pay-button:hover { background-color: #512da8; }
     </style>
 </head>
 <body>
 
     <h1>Welcome to Heikl Pi App</h1>
-    <p>اضغط على الزر أدناه لإتمام المعاملة وتفعيل الخانة رقم 10</p>
+    <p>اضغط أدناه لتفعيل الخانة رقم 10</p>
     
-    <button class="pay-button" onclick="transferPi()">اضغط هنا لتفعيل الخطوة 10 - دفع 0.1 Pi</button>
+    <button class="pay-button" onclick="transferPi()">تفعيل الخطوة 10 - دفع 0.1 Pi</button>
 
     <script>
-        // تهيئة Pi SDK
         const Pi = window.Pi;
+        // تم التعديل هنا لضمان التوافق مع المتصفح
         Pi.init({ version: "2.0", sandbox: false });
 
         async function transferPi() {
             try {
+                // محاولة تسجيل الدخول أولاً للتعرف على هويتك الموثقة
+                const scopes = ['payments'];
+                const auth = await Pi.authenticate(scopes, onIncompletePaymentFound);
+                
                 const payment = await Pi.createPayment({
                     amount: 0.1,
-                    memo: "تفعيل الخانة رقم 10 لتطبيق Heikl Pi",
-                    metadata: { orderId: "12345" }
+                    memo: "تفعيل الخانة 10 لـ Heikl Pi",
+                    metadata: { orderId: "step-10-activation" }
                 }, {
-                    onReadyForServerApproval: (paymentId) => {
-                        console.log("Payment Ready for Approval:", paymentId);
-                    },
+                    onReadyForServerApproval: (paymentId) => { console.log(paymentId); },
                     onReadyForServerCompletion: (paymentId, txid) => {
-                        console.log("Payment Completed:", txid);
-                        alert("تمت العملية بنجاح! تحقق من الخانة رقم 10 الآن.");
+                        alert("تم الدفع بنجاح! الخانة 10 ستصبح خضراء الآن.");
                     },
-                    onCancel: (paymentId) => { console.log("Payment Cancelled"); },
-                    onError: (error, payment) => { console.error("Payment Error", error); }
+                    onCancel: (paymentId) => { console.log("Cancelled"); },
+                    onError: (error, payment) => { console.error(error); }
                 });
             } catch (err) {
-                alert("تأكد من فتح الرابط داخل Pi Browser وبأنك موثق KYC");
+                alert("يجب فتح الرابط من داخل تطبيق Pi Browser حصراً.");
             }
         }
+
+        function onIncompletePaymentFound(payment) { console.log("Incomplete payment found"); }
     </script>
 </body>
 </html>
