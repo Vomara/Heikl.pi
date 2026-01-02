@@ -1,9 +1,10 @@
+
 <!DOCTYPE html>
 <html lang="ar">
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>heikl pi app</title>
+    <title>Heikl Pi App</title>
     <script src="https://sdk.minepi.com/pi-sdk.js"></script>
     <style>
         body {
@@ -41,39 +42,59 @@
 <body>
 
     <div class="container">
-        <h1>welcome to heikl pi app</h1>
-        <p>اضغط أدناه لتفعيل الخانة رقم 10</p>
-        <button id="pay_button">تفعيل الخطوة 10 - دفع 0.1 pi</button>
+        <h1>مرحباً بك في تطبيق هيكل</h1>
+        <p>اضغط أدناه لتفعيل الخطوة رقم 10</p>
+        <button id="pay_button" onclick="createPayment()">دفع 0.1 Pi (Testnet)</button>
     </div>
 
     <script>
         // تهيئة الـ SDK
         const Pi = window.Pi;
+        // ملاحظة: sandbox: true لأن لوحة التحكم لديك مضبوطة على التست نت إجبارياً
         Pi.init({ version: "2.0", sandbox: true });
 
         async function createPayment() {
             try {
                 const payment = await Pi.createPayment({
                     amount: 0.1,
-                    memo: "تفعيل الخطوة رقم 10 في تطبيق heikl",
-                    metadata: { step: 10 }
+                    memo: "تفعيل الخطوة رقم 10 لموقع هيكل",
+                    metadata: { step: 10 },
                 }, {
                     onReadyForServerApproval: function(paymentId) {
-                        console.log("Payment ready for approval:", paymentId);
+                        console.log("تم إنشاء المعاملة بنجاح، المعرف:", paymentId);
+                        // ملاحظة: في النسخة النهائية ستحتاج لموافقة السيرفر هنا
                     },
                     onReadyForServerCompletion: function(paymentId, txid) {
-                        console.log("Payment ready for completion:", paymentId);
+                        console.log("تم اكتمال المعاملة بنجاح، رقم العملية:", txid);
+                        alert("نجحت عملية الدفع! انتظر تحديث الخطوة 10 في لوحة التحكم.");
                     },
-                    onCancel: function(paymentId) { console.log("Payment cancelled"); },
-                    onError: function(error, payment) { console.error("Payment error", error); }
+                    onCancel: function(paymentId) {
+                        console.log("تم إلغاء المعاملة من قبل المستخدم.");
+                    },
+                    onError: function(error, payment) {
+                        console.error("حدث خطأ أثناء الدفع:", error);
+                        alert("حدث خطأ، تأكد من فتح الموقع داخل Pi Browser.");
+                    },
                 });
             } catch (err) {
-                console.error(err);
-                alert("تأكد من فتح الرابط داخل Pi Browser");
+                console.error("فشل التوثيق أو الدفع:", err);
+                alert("تأكد من تسجيل الدخول في Pi Browser أولاً.");
             }
         }
 
-        document.getElementById('pay_button').addEventListener('click', createPayment);
+        // توثيق المستخدم فور فتح الصفحة
+        async function authenticateUser() {
+            try {
+                const user = await Pi.authenticate(['payments', 'username'], (payment) => {
+                    console.log("دفع معلق مكتشف:", payment);
+                });
+                console.log("تم توثيق المستخدم:", user.username);
+            } catch (err) {
+                console.error("فشل التوثيق:", err);
+            }
+        }
+
+        authenticateUser();
     </script>
 </body>
 </html>
