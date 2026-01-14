@@ -1,100 +1,38 @@
-
 <!DOCTYPE html>
-<html lang="ar">
+<html>
 <head>
-    <meta charset="UTF-8">
-    <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>Heikl Pi App</title>
     <script src="https://sdk.minepi.com/pi-sdk.js"></script>
-    <style>
-        body {
-            font-family: Arial, sans-serif;
-            display: flex;
-            flex-direction: column;
-            align-items: center;
-            justify-content: center;
-            height: 100vh;
-            margin: 0;
-            background-color: #f9f9f9;
-        }
-        .container {
-            text-align: center;
-            padding: 20px;
-            background: white;
-            border-radius: 15px;
-            box-shadow: 0 4px 6px rgba(0,0,0,0.1);
-        }
-        h1 { color: #333; margin-bottom: 10px; }
-        p { color: #666; margin-bottom: 20px; }
-        button {
-            background-color: #673ab7;
-            color: white;
-            border: none;
-            padding: 15px 30px;
-            font-size: 18px;
-            border-radius: 25px;
-            cursor: pointer;
-            transition: background 0.3s;
-        }
-        button:hover { background-color: #512da8; }
-    </style>
 </head>
-<body>
+<body style="text-align: center; margin-top: 100px; font-family: sans-serif;">
 
-    <div class="container">
-        <h1>مرحباً بك في تطبيق هيكل</h1>
-        <p>اضغط أدناه لتفعيل الخطوة رقم 10</p>
-        <button id="pay_button" onclick="createPayment()">دفع 0.1 Pi (Testnet)</button>
-    </div>
+    <h1>تفعيل الخطوة 10</h1>
+    <button id="pay" style="padding: 20px; background: #673ab7; color: white; border-radius: 10px; border: none; font-size: 20px;">
+        دفع 0.1 Pi تجريبي
+    </button>
+    <p id="status"></p>
 
     <script>
-        // تهيئة الـ SDK
         const Pi = window.Pi;
-        // ملاحظة: sandbox: true لأن لوحة التحكم لديك مضبوطة على التست نت إجبارياً
-        Pi.init({ version: "2.0", sandbox: true });
+        Pi.init({ version: "2.0", sandbox: true }); // sandbox: true ضروري للتست نت
 
-        async function createPayment() {
+        document.getElementById('pay').onclick = async () => {
+            const status = document.getElementById('status');
+            status.innerText = "جاري الاتصال...";
             try {
-                const payment = await Pi.createPayment({
+                await Pi.createPayment({
                     amount: 0.1,
-                    memo: "تفعيل الخطوة رقم 10 لموقع هيكل",
-                    metadata: { step: 10 },
+                    memo: "Testnet Payment",
+                    metadata: { step: "10" }
                 }, {
-                    onReadyForServerApproval: function(paymentId) {
-                        console.log("تم إنشاء المعاملة بنجاح، المعرف:", paymentId);
-                        // ملاحظة: في النسخة النهائية ستحتاج لموافقة السيرفر هنا
-                    },
-                    onReadyForServerCompletion: function(paymentId, txid) {
-                        console.log("تم اكتمال المعاملة بنجاح، رقم العملية:", txid);
-                        alert("نجحت عملية الدفع! انتظر تحديث الخطوة 10 في لوحة التحكم.");
-                    },
-                    onCancel: function(paymentId) {
-                        console.log("تم إلغاء المعاملة من قبل المستخدم.");
-                    },
-                    onError: function(error, payment) {
-                        console.error("حدث خطأ أثناء الدفع:", error);
-                        alert("حدث خطأ، تأكد من فتح الموقع داخل Pi Browser.");
-                    },
+                    onReadyForServerApproval: (id) => status.innerText = "بانتظار الموافقة..",
+                    onReadyForServerCompletion: (id, tx) => status.innerText = "نجحت العملية! TX: " + tx,
+                    onCancel: (id) => status.innerText = "تم الإلغاء",
+                    onError: (err) => status.innerText = "خطأ: " + err.message
                 });
-            } catch (err) {
-                console.error("فشل التوثيق أو الدفع:", err);
-                alert("تأكد من تسجيل الدخول في Pi Browser أولاً.");
+            } catch (e) {
+                status.innerText = "افتحه من Pi Browser";
             }
-        }
-
-        // توثيق المستخدم فور فتح الصفحة
-        async function authenticateUser() {
-            try {
-                const user = await Pi.authenticate(['payments', 'username'], (payment) => {
-                    console.log("دفع معلق مكتشف:", payment);
-                });
-                console.log("تم توثيق المستخدم:", user.username);
-            } catch (err) {
-                console.error("فشل التوثيق:", err);
-            }
-        }
-
-        authenticateUser();
+        };
     </script>
 </body>
 </html>
